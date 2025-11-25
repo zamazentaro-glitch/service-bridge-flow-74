@@ -20,22 +20,41 @@ export default function Dashboard() {
   ];
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-      "Draft": "secondary",
-      "In Progress": "default",
-      "Completed": "outline",
+    const config: Record<string, { variant: "default" | "secondary" | "outline" | "destructive", className: string }> = {
+      "Draft": { 
+        variant: "secondary", 
+        className: "bg-muted text-muted-foreground border-0" 
+      },
+      "In Progress": { 
+        variant: "default", 
+        className: "bg-primary/10 text-primary border-0 hover:bg-primary/20" 
+      },
+      "Completed": { 
+        variant: "outline", 
+        className: "bg-success/10 text-success border-success/20 hover:bg-success/20" 
+      },
     };
-    return <Badge variant={variants[status] || "default"}>{status}</Badge>;
+    
+    const { variant, className } = config[status] || config["Draft"];
+    return (
+      <Badge variant={variant} className={className}>
+        {status}
+      </Badge>
+    );
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back! Here's your workshop overview.</p>
+    <div className="space-y-8 max-w-[1400px] mx-auto">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Welcome back! Here's your workshop overview.
+        </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Stats Grid */}
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Today's Revenue"
           value={stats.todayRevenue}
@@ -59,9 +78,10 @@ export default function Dashboard() {
         />
       </div>
 
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid gap-4 md:grid-cols-3">
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold tracking-tight">Quick Actions</h2>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           <QuickActionCard
             title="Create Work Order"
             description="Start a new service work order"
@@ -84,26 +104,35 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Work Orders</CardTitle>
+      {/* Recent Work Orders */}
+      <Card className="border-border/40 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold tracking-tight">
+            Recent Work Orders
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {recentOrders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <p className="font-semibold">{order.id}</p>
+              <div 
+                key={order.id} 
+                className="flex items-center justify-between p-4 rounded-lg border border-border/40 bg-card hover:bg-muted/30 hover:border-border transition-all duration-200 cursor-pointer"
+              >
+                <div className="flex items-center gap-6">
+                  <div className="space-y-1">
+                    <p className="font-semibold text-sm">{order.id}</p>
                     <p className="text-sm text-muted-foreground">{order.customer}</p>
                   </div>
-                  <div className="text-sm">
-                    <p className="text-muted-foreground">Plate: {order.plate}</p>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Plate Number</p>
+                    <p className="text-sm font-medium">{order.plate}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
                   {getStatusBadge(order.status)}
-                  <p className="font-semibold">{order.total}</p>
+                  <p className="font-semibold text-sm min-w-[120px] text-right">
+                    {order.total}
+                  </p>
                 </div>
               </div>
             ))}
