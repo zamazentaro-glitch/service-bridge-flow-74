@@ -10,9 +10,12 @@ import {
   Car,
   Package,
   Building2,
-  RefreshCw
+  RefreshCw,
+  LogOut
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 
 import {
   Sidebar,
@@ -24,6 +27,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 
 const mainMenuItems = [
@@ -47,6 +51,12 @@ const systemItems = [
 ];
 
 export function AppSidebar() {
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <Sidebar className="border-r border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border p-4">
@@ -129,6 +139,34 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t border-sidebar-border p-4">
+        {user && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-sidebar-accent flex items-center justify-center">
+                <span className="text-xs font-medium text-sidebar-foreground">
+                  {user.email?.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-sidebar-foreground truncate">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSignOut}
+              className="w-full justify-start text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Keluar
+            </Button>
+          </div>
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
